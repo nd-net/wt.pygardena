@@ -5,14 +5,33 @@ class GardenaSmartMower(GardenaSmartDevice):
         super().__init__(location, raw_data)
         self.category = "mower"
 
-    def start(self, duration=1440):
-        self.send_command('start_override_timer', {'duration': duration})
+    def start(self, duration_in_minutes=1440):
+        """
+        Manually start the mower, overriding the mower timer.
+        The mower will work for the specified time duration - mowing and recharging.
+        Once the specified duration is over, it will resume its normal schedule.
+        
+        :param duration_in_minutes: the duration during which the mower should mow.
+        """
+        self.send_command('start_override_timer', {'duration': duration_in_minutes})
 
     def park_until_timer(self):
+        """
+        Park a mower until the next timer wakes it up again.
+        """
         self.send_command('park_until_next_timer')
 
     def park(self):
+        """
+        Park a mower until it is manually resumed again using either `start()` or `resume_schedule()`.
+        """
         self.send_command('park_until_further_notice')
+    
+    def resume_schedule(self):
+        """
+        Resume the mower scheduler. This cancels the effects of `park()` and `start()`.
+        """
+        self.send_command('start_resume_schedule')
 
     def get_manual_operation(self):
         return self.get_value_of_property('robotic_mower', 'manual_operation')

@@ -50,11 +50,19 @@ class GardenaSmartWateringComputer(GardenaSmartDevice):
         device_info['adaptive_scheduling_last_decision'] = self.get_adaptive_scheduling_last_decision()
         return  device_info
 
-    def start(self, duration=30):
-        self.send_command('manual_override', {'duration': duration})
+    def start(self, duration_in_minutes=30):
+        """
+        Start the manual watering.
+        
+        :param duration_in_minutes: the duration that the manual override lasts
+        """
+        self.send_command('manual_override', {'duration': duration_in_minutes})
         self._valve_open = True
 
     def stop(self):
+        """
+        Close the valve and stop manual watering.
+        """
         self.send_command('cancel_override')
         self._valve_open = False
 
